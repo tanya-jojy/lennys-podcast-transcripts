@@ -1,34 +1,30 @@
 ---
 guest: Kunal Shah
-title: Building a meaningful career | Jason Shah (Airbnb, Amazon, Microsoft, Alchemy)
-youtube_url: https://www.youtube.com/watch?v=nMsA5VeLoOM
-video_id: nMsA5VeLoOM
-description: Jason Shah has led product teams at Amazon, Airbnb, Microsoft, and Yammer
-  and currently leads the product team at Alchemy (one of the most important web3
-  infrastructure companies). In addition,...
-duration_seconds: 4214.0
-duration: '1:10:14'
-view_count: 5855
+title: Kunal Shah on winning in India, second-order thinking, the philosophy of startups, and more
+youtube_url: https://www.youtube.com/watch?v=EgBOVDzUUAA
+video_id: EgBOVDzUUAA
+description: Kunal Shah is one of the most well-known and admired product leaders in India. He is the CEO and founder of CRED, an Indian-based fintech startup valued at over $6 billion. Prior to CRED, he founded three other startups, including Freecharge, which he sold for over $400 million to Snapdeal. He has also been an advisor to India’s most influential organizations.
+duration_seconds: 4737.0
+duration: '1:18:57'
+view_count: 127 144
 channel: Lenny's Podcast
 keywords:
-- growth
-- conversion
-- pricing
-- monetization
-- revenue
-- hiring
-- culture
-- leadership
-- management
-- strategy
-- vision
-- positioning
-- market
-- persona
-- design
+- Delta 4 framework
+- efficiency
+- trust
+- ARPU
+- curiosity
+- second-order thinking
+- status
+- wealth
+- information asymmetry
+- India
+- consumer psychology
+- risk aversion
+- founder dharma
 ---
 
-# The future of AI in software development | Inbal Shani (CPO of GitHub)
+# Kunal Shah on winning in India, second-order thinking, the philosophy of startups, and more
 
 ## Transcript
 

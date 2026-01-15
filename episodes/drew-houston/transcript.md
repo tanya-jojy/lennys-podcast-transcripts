@@ -1,35 +1,34 @@
 ---
 guest: Drew Houston
-title: I’ve run 75+ businesses. Here’s why you’re probably chasing the wrong idea.
-  | Andrew Wilkinson
-youtube_url: https://www.youtube.com/watch?v=VxAwUb86MUE
-video_id: VxAwUb86MUE
-description: Andrew Wilkinson is the co‑founder of Tiny, a holding company that quietly
-  owns more than three dozen profitable internet and consumer brands, including Dribbble
-  and the AeroPress coffee...
-duration_seconds: 5308.0
-duration: '1:28:28'
-view_count: 57875
+title: Behind the founder | Drew Houston (Dropbox)
+youtube_url: https://www.youtube.com/watch?v=egdYKLBswgk
+video_id: egdYKLBswgk
+description: Drew Houston is the co-founder and CEO of Dropbox. Under his leadership, Dropbox has grown from a simple idea to a service used by over 700 million registered users globally, with a valuation exceeding $9 billion. Drew has led Dropbox through multiple phases, from explosive viral growth, to battling all the tech giants at once, to reinventing the company for the future of work. 
+duration_seconds: 6450.0
+duration: '1:47:30'
+view_count: 72 864
 channel: Lenny's Podcast
 keywords:
 - growth
-- retention
+- registered users
+- viral growth
+- referral program
+- incumbents
+- competition
+- differentiation
+- pivot
+- portfolio management
 - roadmap
 - mvp
 - iteration
 - analytics
+- automation
+- machine learning
 - monetization
 - revenue
-- hiring
-- culture
-- leadership
-- management
-- strategy
-- vision
-- mission
 ---
 
-# How embracing your emotions will accelerate your career | Joe Hudson (Art of Accomplishment)
+# Behind the founder: Drew Houston (Dropbox)
 
 ## Transcript
 
