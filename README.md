@@ -157,6 +157,8 @@ Here are some projects that have been built using this transcript archive:
 
 **[Lenny's Experts](https://www.expertand.com/lenny)** by [@joeyh](https://twitter.com/joeyh) - Make Lenny's guests your personal expert network. Browse by topic, save what resonates, come back to it later.
 
+**[Lenny's Podcast on Pod Recs](https://rave.us/pod-recs)** by Pod Recs - Browse and save all the things recommended on Lenny's Podcast. Books, films, products... it's all there (and normalised!)
+
 Have you built something with these transcripts? Open a PR to add your project to this list!
 
 ## Disclaimer
