@@ -1,0 +1,69 @@
+name: Consolidate Lenny Index for Claude
+
+on:
+  push:
+    paths:
+      - 'index/**'       # Only runs when index files change
+  workflow_dispatch:     # Lets you trigger it manually anytime
+
+jobs:
+  consolidate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Merge index files into single document
+        run: |
+          OUTPUT="byl-lenny-brain.md"
+
+          echo "# BYL Lenny Brain — Consolidated Index" > $OUTPUT
+          echo "_Auto-generated from Lenny's Podcast Transcripts Archive_" >> $OUTPUT
+          echo "_Last updated: $(date -u '+%Y-%m-%d %H:%M UTC')_" >> $OUTPUT
+          echo "" >> $OUTPUT
+          echo "---" >> $OUTPUT
+          echo "" >> $OUTPUT
+
+          # Add the main README first
+          if [ -f "index/README.md" ]; then
+            echo "## MASTER INDEX" >> $OUTPUT
+            echo "" >> $OUTPUT
+            cat "index/README.md" >> $OUTPUT
+            echo "" >> $OUTPUT
+            echo "---" >> $OUTPUT
+            echo "" >> $OUTPUT
+          fi
+
+          # Add all other index topic files
+          for f in index/*.md; do
+            if [ "$f" != "index/README.md" ]; then
+              TOPIC=$(basename "$f" .md | tr '-' ' ' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2)}1')
+              echo "## TOPIC: $TOPIC" >> $OUTPUT
+              echo "" >> $OUTPUT
+              cat "$f" >> $OUTPUT
+              echo "" >> $OUTPUT
+              echo "---" >> $OUTPUT
+              echo "" >> $OUTPUT
+            fi
+          done
+
+          echo "✅ Consolidated index written to $OUTPUT"
+          wc -l $OUTPUT
+
+      - name: Commit and push consolidated file
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add byl-lenny-brain.md
+          git diff --staged --quiet || git commit -m "chore: update byl-lenny-brain.md [auto]"
+          git push
+
+      - name: Notify via Slack (optional)
+        if: ${{ secrets.SLACK_WEBHOOK_URL != '' }}
+        run: |
+          curl -X POST "${{ secrets.SLACK_WEBHOOK_URL }}" \
+            -H 'Content-type: application/json' \
+            --data '{
+              "text": "📚 *Lenny Brain Updated*\nYour `byl-lenny-brain.md` is ready. Download and drop into your Claude Project.\n👉 https://github.com/${{ github.repository }}/blob/main/byl-lenny-brain.md"
+            }'
