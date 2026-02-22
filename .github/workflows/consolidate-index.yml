@@ -58,4 +58,12 @@ jobs:
           git add byl-lenny-brain.md
           git diff --staged --quiet || git commit -m "chore: update byl-lenny-brain.md [auto]"
           git push
+
+      - name: Notify via Slack (optional)
+        if: ${{ secrets.SLACK_WEBHOOK_URL != '' }}
+        run: |
+          curl -X POST "${{ secrets.SLACK_WEBHOOK_URL }}" \
+            -H 'Content-type: application/json' \
+            --data '{
+              "text": "📚 *Lenny Brain Updated*\nYour `byl-lenny-brain.md` is ready. Download and drop into your Claude Project.\n👉 https://github.com/${{ github.repository }}/blob/main/byl-lenny-brain.md"
             }'
