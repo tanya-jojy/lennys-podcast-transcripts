@@ -1,66 +1,306 @@
-name: Consolidate Lenny Index for Claude
+name: Generate BYL Project Files with Full Transcripts
 
 on:
   push:
     paths:
       - 'index/**'
+      - 'episodes/**'
   workflow_dispatch:
 
 jobs:
-  consolidate:
+  generate:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Merge index files into single document
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Classify and generate project files
         run: |
-          OUTPUT="byl-lenny-brain.md"
+          cat << 'PYTHON_SCRIPT' > classify_and_generate.py
+          import os
+          import yaml
+          import re
+          from pathlib import Path
+          from datetime import datetime, timezone
 
-          echo "# BYL Lenny Brain — Consolidated Index" > $OUTPUT
-          echo "_Auto-generated from Lenny's Podcast Transcripts Archive_" >> $OUTPUT
-          echo "_Last updated: $(date -u '+%Y-%m-%d %H:%M UTC')_" >> $OUTPUT
-          echo "" >> $OUTPUT
-          echo "---" >> $OUTPUT
-          echo "" >> $OUTPUT
+          # ── Topic → Project mapping ──────────────────────────────────────────────
+          TOPIC_TO_PROJECT = {
+            # PROJECT 1: Product Strategy & Vision
+            "product-strategy":       1, "product-market-fit":     1, "innovation":             1,
+            "business-strategy":      1, "strategy":               1, "founder-mode":           1,
+            "entrepreneurship":       1, "bootstrapping":          1, "network-effects":        1,
+            "marketplaces":           1, "airbnb":                 1, "stripe":                 1,
 
-          if [ -f "index/README.md" ]; then
-            echo "## MASTER INDEX" >> $OUTPUT
-            echo "" >> $OUTPUT
-            cat "index/README.md" >> $OUTPUT
-            echo "" >> $OUTPUT
-            echo "---" >> $OUTPUT
-            echo "" >> $OUTPUT
-          fi
+            # PROJECT 2: Product Management & Development
+            "product-management":     2, "product-development":    2, "product-leadership":     2,
+            "prioritization":         2, "okrs":                   2, "decision-making":        2,
+            "experimentation":        2, "ab-testing":             2, "agile":                  2,
+            "focus":                  2, "google":                 2, "microsoft":              2,
 
-          for f in index/*.md; do
-            if [ "$f" != "index/README.md" ]; then
-              TOPIC=$(basename "$f" .md | tr '-' ' ' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2)}1')
-              echo "## TOPIC: $TOPIC" >> $OUTPUT
-              echo "" >> $OUTPUT
-              cat "$f" >> $OUTPUT
-              echo "" >> $OUTPUT
-              echo "---" >> $OUTPUT
-              echo "" >> $OUTPUT
-            fi
-          done
+            # PROJECT 3: Growth & Revenue
+            "growth-strategy":        3, "startup-growth":         3, "product-led-growth":     3,
+            "retention":              3, "sales":                  3, "enterprise-sales":       3,
+            "marketing":              3, "brand-building":         3, "branding":               3,
+            "word-of-mouth":          3, "community-building":     3, "uber":                   3,
+            "linkedin":               3,
 
-          echo "✅ Consolidated index written to $OUTPUT"
-          wc -l $OUTPUT
+            # PROJECT 4: AI & Machine Learning
+            "ai":                     4, "machine-learning":       4, "chatgpt":                4,
+            "openai":                 4,
 
-      - name: Commit and push consolidated file
+            # PROJECT 5: Leadership & Management
+            "leadership":             5, "management":             5, "organizational-design":  5,
+            "executive-coaching":     5, "company-culture":        5, "startup-culture":        5,
+            "feedback":               5, "influence":              5, "power":                  5,
+            "communication":          5, "storytelling":           5, "slack":                  5,
+
+            # PROJECT 6: Hiring, Teams & People
+            "hiring":                 6, "recruiting":             6, "team-building":          6,
+            "mentorship":             6, "executive-search":       6, "remote-work":            6,
+            "work-life-balance":      6, "facebook":               6, "meta":                   6,
+
+            # PROJECT 7: Workflow, Productivity & Engineering
+            "engineering":            7, "productivity":           7, "time-management":        7,
+            "design":                 7, "user-experience":        7, "customer-experience":    7,
+            "customer-research":      7,
+
+            # PROJECT 8: Career & Personal Growth
+            "career-development":     8, "career-growth":          8, "personal-development":   8,
+            "personal-branding":      8, "personal-transformation":8, "skill-building":         8,
+            "networking":             8, "anxiety-management":     8, "mental-health":          8,
+            "stress-management":      8, "psychology":             8, "neuroscience":           8,
+
+            # PROJECT 9: Data, Analytics & Experimentation
+            "analytics":              9, "data-analytics":         9,
+
+            # PROJECT 10: Venture, Finance & Strategy
+            "venture-capital":       10, "media-relations":       10,
+          }
+
+          # Topics that appear in multiple projects (full content in both)
+          MULTI_PROJECT_TOPICS = {
+            "experimentation":    [2, 4, 9],
+            "ab-testing":         [2, 9],
+            "machine-learning":   [4, 9],
+            "okrs":               [2, 7],
+            "agile":              [2, 7],
+            "focus":              [2, 7],
+            "slack":              [5, 7],
+            "mentorship":         [6, 8],
+            "entrepreneurship":   [1, 10],
+            "business-strategy":  [1, 10],
+            "bootstrapping":      [1, 10],
+            "enterprise-sales":   [3, 10],
+          }
+
+          PROJECT_NAMES = {
+            1:  "Product Strategy & Vision",
+            2:  "Product Management & Development",
+            3:  "Growth & Revenue",
+            4:  "AI & Machine Learning",
+            5:  "Leadership & Management",
+            6:  "Hiring, Teams & People",
+            7:  "Workflow, Productivity & Engineering",
+            8:  "Career & Personal Growth",
+            9:  "Data, Analytics & Experimentation",
+            10: "Venture, Finance & Strategy",
+          }
+
+          PROJECT_FILES = {
+            1:  "01-product-strategy-vision.md",
+            2:  "02-product-management-development.md",
+            3:  "03-growth-revenue.md",
+            4:  "04-ai-machine-learning.md",
+            5:  "05-leadership-management.md",
+            6:  "06-hiring-teams-people.md",
+            7:  "07-workflow-productivity-engineering.md",
+            8:  "08-career-personal-growth.md",
+            9:  "09-data-analytics-experimentation.md",
+            10: "10-venture-finance-strategy.md",
+          }
+
+          def normalize_tag(tag):
+              return re.sub(r'[^a-z0-9]+', '-', tag.lower()).strip('-')
+
+          def get_projects_for_tags(tags):
+              projects = set()
+              for tag in tags:
+                  norm = normalize_tag(tag)
+                  if norm in MULTI_PROJECT_TOPICS:
+                      projects.update(MULTI_PROJECT_TOPICS[norm])
+                  elif norm in TOPIC_TO_PROJECT:
+                      projects.add(TOPIC_TO_PROJECT[norm])
+              return projects
+
+          def parse_transcript(filepath):
+              try:
+                  content = filepath.read_text(encoding='utf-8', errors='replace')
+                  parts = content.split('---', 2)
+                  if len(parts) >= 3:
+                      try:
+                          meta = yaml.safe_load(parts[1]) or {}
+                      except:
+                          meta = {}
+                      body = parts[2].strip()
+                  else:
+                      meta = {}
+                      body = content.strip()
+                  return meta, body
+              except Exception as e:
+                  print(f"  WARNING: Could not parse {filepath}: {e}")
+                  return {}, ""
+
+          def get_tags_from_transcript(meta, body, guest_folder):
+              tags = []
+
+              # Try frontmatter tag fields
+              for field in ['tags', 'keywords', 'topics', 'categories']:
+                  val = meta.get(field)
+                  if isinstance(val, list):
+                      tags.extend([str(t) for t in val])
+                  elif isinstance(val, str):
+                      tags.extend([t.strip() for t in val.split(',')])
+
+              # Match guest folder name against known topics
+              folder_norm = normalize_tag(guest_folder)
+              if folder_norm in TOPIC_TO_PROJECT:
+                  tags.append(folder_norm)
+
+              # Keyword scan if still no tags
+              if not tags:
+                  text_to_scan = (
+                      str(meta.get('title', '')) + ' ' +
+                      str(meta.get('description', '')) + ' ' +
+                      body[:3000]
+                  ).lower()
+                  for topic in TOPIC_TO_PROJECT.keys():
+                      topic_words = topic.replace('-', ' ')
+                      if topic_words in text_to_scan:
+                          tags.append(topic)
+
+              return tags
+
+          # ── Main ─────────────────────────────────────────────────────────────────
+
+          episodes_dir = Path('episodes')
+          output_dir = Path('byl-projects')
+          output_dir.mkdir(exist_ok=True)
+
+          all_transcripts = []
+          episode_dirs = sorted([d for d in episodes_dir.iterdir() if d.is_dir()])
+          print(f"Found {len(episode_dirs)} episode directories")
+
+          for ep_dir in episode_dirs:
+              transcript_file = ep_dir / 'transcript.md'
+              if not transcript_file.exists():
+                  continue
+              meta, body = parse_transcript(transcript_file)
+              tags = get_tags_from_transcript(meta, body, ep_dir.name)
+              projects = get_projects_for_tags(tags)
+
+              if not projects:
+                  projects = {2}
+                  print(f"  No topic match for '{ep_dir.name}' -> defaulting to Project 2")
+
+              all_transcripts.append({
+                  'path': transcript_file,
+                  'dir': ep_dir.name,
+                  'meta': meta,
+                  'body': body,
+                  'tags': tags,
+                  'projects': projects,
+              })
+
+          print(f"Classified {len(all_transcripts)} transcripts\n")
+
+          timestamp = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
+          project_counts = {i: 0 for i in range(1, 11)}
+
+          for proj_num, proj_name in PROJECT_NAMES.items():
+              output_file = output_dir / PROJECT_FILES[proj_num]
+              relevant = [t for t in all_transcripts if proj_num in t['projects']]
+              project_counts[proj_num] = len(relevant)
+
+              with open(output_file, 'w', encoding='utf-8') as f:
+                  f.write(f"# BYL Brain: {proj_name}\n")
+                  f.write(f"_Auto-generated from Lenny's Podcast Transcripts Archive_\n")
+                  f.write(f"_Last updated: {timestamp}_\n")
+                  f.write(f"_Episodes in this project: {len(relevant)}_\n\n")
+                  f.write("---\n\n")
+
+                  # Topic index section
+                  index_dir = Path('index')
+                  proj_topics = [k for k, v in TOPIC_TO_PROJECT.items() if v == proj_num]
+                  multi_topics = [k for k, vlist in MULTI_PROJECT_TOPICS.items() if proj_num in vlist]
+                  all_proj_topics = sorted(set(proj_topics + multi_topics))
+
+                  f.write("## TOPIC INDEX\n\n")
+                  for topic in all_proj_topics:
+                      index_file = index_dir / f"{topic}.md"
+                      if index_file.exists():
+                          f.write(f"### {topic.replace('-', ' ').title()}\n\n")
+                          f.write(index_file.read_text(encoding='utf-8', errors='replace'))
+                          f.write("\n\n---\n\n")
+
+                  # Full transcripts section
+                  f.write("## FULL TRANSCRIPTS\n\n")
+                  f.write(f"_This project contains {len(relevant)} full episode transcripts._\n\n")
+                  f.write("---\n\n")
+
+                  for t in relevant:
+                      guest = t['meta'].get('guest', t['dir'])
+                      title = t['meta'].get('title', f"Episode: {t['dir']}")
+                      date  = t['meta'].get('publish_date', 'Unknown')
+                      url   = t['meta'].get('youtube_url', '')
+
+                      f.write(f"## {title}\n")
+                      f.write(f"**Guest:** {guest}  \n")
+                      f.write(f"**Published:** {date}  \n")
+                      if url:
+                          f.write(f"**YouTube:** {url}  \n")
+                      if t['tags']:
+                          f.write(f"**Tags:** {', '.join(t['tags'][:10])}  \n")
+                      f.write("\n")
+                      f.write(t['body'])
+                      f.write("\n\n---\n\n")
+
+              size_mb = output_file.stat().st_size / (1024 * 1024)
+              print(f"Project {proj_num:02d}: {proj_name}")
+              print(f"  -> {len(relevant)} episodes | {size_mb:.1f} MB | {output_file.name}")
+
+          print(f"\nAll 10 project files generated in byl-projects/")
+          print(f"\nEpisode distribution:")
+          total = 0
+          for proj_num, count in project_counts.items():
+              print(f"  Project {proj_num:02d} ({PROJECT_NAMES[proj_num]}): {count} episodes")
+              total += count
+          print(f"\n  Total episode slots (incl. duplicates): {total}")
+
+          PYTHON_SCRIPT
+
+          python classify_and_generate.py
+
+      - name: Commit and push project files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add byl-lenny-brain.md
-          git diff --staged --quiet || git commit -m "chore: update byl-lenny-brain.md [auto]"
+          git add byl-projects/
+          git diff --staged --quiet || git commit -m "chore: update byl-projects/ with full transcripts [auto]"
           git push
 
       - name: Notify via Slack
         run: |
           curl -X POST "${{ secrets.SLACK_WEBHOOK_URL }}" \
             -H 'Content-type: application/json' \
-            --data '{
-              "text": "📚 *Lenny Brain Updated*\nYour `byl-lenny-brain.md` is ready. Download and drop into your Claude Project.\n👉 https://github.com/${{ github.repository }}/blob/main/byl-lenny-brain.md"
-            }'
+            --data "{
+              \"text\": \"📚 *BYL Project Files Updated*\nAll 10 project brain files regenerated with full transcripts.\n👉 https://github.com/${{ github.repository }}/tree/main/byl-projects\"
+            }"
