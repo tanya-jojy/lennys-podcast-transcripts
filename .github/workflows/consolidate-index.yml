@@ -3,8 +3,8 @@ name: Consolidate Lenny Index for Claude
 on:
   push:
     paths:
-      - 'index/**'       # Only runs when index files changes
-  workflow_dispatch:     # Lets you trigger it manually anytime
+      - 'index/**'
+  workflow_dispatch:
 
 jobs:
   consolidate:
@@ -25,7 +25,6 @@ jobs:
           echo "---" >> $OUTPUT
           echo "" >> $OUTPUT
 
-          # Add the main README first
           if [ -f "index/README.md" ]; then
             echo "## MASTER INDEX" >> $OUTPUT
             echo "" >> $OUTPUT
@@ -35,7 +34,6 @@ jobs:
             echo "" >> $OUTPUT
           fi
 
-          # Add all other index topic files
           for f in index/*.md; do
             if [ "$f" != "index/README.md" ]; then
               TOPIC=$(basename "$f" .md | tr '-' ' ' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2)}1')
@@ -65,5 +63,4 @@ jobs:
             -H 'Content-type: application/json' \
             --data '{
               "text": "📚 *Lenny Brain Updated*\nYour `byl-lenny-brain.md` is ready. Download and drop into your Claude Project.\n👉 https://github.com/${{ github.repository }}/blob/main/byl-lenny-brain.md"
-            }'
             }'
