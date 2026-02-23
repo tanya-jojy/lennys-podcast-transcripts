@@ -1,14 +1,12 @@
 # BYL Brain: Career & Personal Growth
-_Auto-generated from Lenny's Podcast Transcripts Archive_
-_Last updated: 2026-02-23 00:57 UTC_
-_Total episodes in this project: 0_
-_Hard cap: 60,000 lines total across all parts_
+_Lenny's Podcast — 0 of 0 episodes included_
+_Last updated: 2026-02-23 01:10 UTC | Claude.ai optimised: 4,500 lines/file, 8,000 lines total_
 
 ---
 
 ## TOPIC INDEX
 
-### Anxiety Management
+**Anxiety Management**
 
 # anxiety-management
 
@@ -17,9 +15,7 @@ Episodes discussing **anxiety-management**:
 - [Tristan de Montebello](../episodes/tristan-de-montebello/transcript.md)
 
 
----
-
-### Career Development
+**Career Development**
 
 # career development
 
@@ -67,9 +63,7 @@ Episodes discussing **career development**:
 - [Wes Kao](../episodes/wes-kao/transcript.md)
 
 
----
-
-### Career Growth
+**Career Growth**
 
 # career growth
 
@@ -84,9 +78,7 @@ Episodes discussing **career growth**:
 - [Vikrama Dhiman](../episodes/vikrama-dhiman/transcript.md)
 
 
----
-
-### Mental Health
+**Mental Health**
 
 # mental health
 
@@ -96,9 +88,7 @@ Episodes discussing **mental health**:
 - [Jonny Miller](../episodes/jonny-miller/transcript.md)
 
 
----
-
-### Mentorship
+**Mentorship**
 
 # mentorship
 
@@ -113,9 +103,7 @@ Episodes discussing **mentorship**:
 - [Melissa Tan](../episodes/melissa-tan/transcript.md)
 
 
----
-
-### Networking
+**Networking**
 
 # networking
 
@@ -125,9 +113,7 @@ Episodes discussing **networking**:
 - [Phyl Terry](../episodes/phyl-terry/transcript.md)
 
 
----
-
-### Neuroscience
+**Neuroscience**
 
 # neuroscience
 
@@ -136,9 +122,7 @@ Episodes discussing **neuroscience**:
 - [Evan LaPointe](../episodes/evan-lapointe/transcript.md)
 
 
----
-
-### Personal Branding
+**Personal Branding**
 
 # personal branding
 
@@ -147,9 +131,7 @@ Episodes discussing **personal branding**:
 - [Jeffrey Pfeffer](../episodes/jeffrey-pfeffer/transcript.md)
 
 
----
-
-### Personal Development
+**Personal Development**
 
 # personal development
 
@@ -162,9 +144,7 @@ Episodes discussing **personal development**:
 - [Tristan de Montebello](../episodes/tristan-de-montebello/transcript.md)
 
 
----
-
-### Personal Transformation
+**Personal Transformation**
 
 # personal transformation
 
@@ -174,9 +154,7 @@ Episodes discussing **personal transformation**:
 - [Paul Millerd](../episodes/paul-millerd/transcript.md)
 
 
----
-
-### Psychology
+**Psychology**
 
 # psychology
 
@@ -187,9 +165,7 @@ Episodes discussing **psychology**:
 - [Nir Eyal](../episodes/nir-eyal/transcript.md)
 
 
----
-
-### Skill Building
+**Skill Building**
 
 # skill-building
 
@@ -198,9 +174,7 @@ Episodes discussing **skill-building**:
 - [Tristan de Montebello](../episodes/tristan-de-montebello/transcript.md)
 
 
----
-
-### Stress Management
+**Stress Management**
 
 # stress management
 
@@ -212,7 +186,5 @@ Episodes discussing **stress management**:
 
 ---
 
-## FULL TRANSCRIPTS
-
----
+## TRANSCRIPTS
 
