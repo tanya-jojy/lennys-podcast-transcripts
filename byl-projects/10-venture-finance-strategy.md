@@ -1,12 +1,12 @@
 # BYL Brain: Venture, Finance & Strategy
 _Auto-generated from Lenny's Podcast Transcripts Archive_
-_Last updated: 2026-02-23 00:40 UTC_
+_Last updated: 2026-02-23 00:57 UTC_
+_Total episodes in this project: 3_
+_Hard cap: 60,000 lines total across all parts_
 
 ---
 
 ## TOPIC INDEX
-
-_This project covers 3 episodes across 6 topics._
 
 ### Bootstrapping
 
