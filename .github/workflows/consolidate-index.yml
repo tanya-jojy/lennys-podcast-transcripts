@@ -33,8 +33,8 @@ jobs:
           from datetime import datetime, timezone
 
           # ── Constants ────────────────────────────────────────────────────────────
-          # 200k tokens ≈ 800k words ≈ ~4.8MB of plain text (conservative: use 4MB)
-          MAX_CHARS_PER_FILE = 4_000_000
+          MAX_TOTAL_LINES_PER_PROJECT = 60_000   # Hard cap: total lines across ALL parts
+          MAX_LINES_PER_FILE = 60_000            # Each individual part also capped at 60k
 
           # ── Topic → Project mapping ──────────────────────────────────────────────
           TOPIC_TO_PROJECT = {
@@ -123,6 +123,9 @@ jobs:
 
           # ── Helpers ──────────────────────────────────────────────────────────────
 
+          def count_lines(text):
+              return text.count('\n') + 1
+
           def normalize_tag(tag):
               return re.sub(r'[^a-z0-9]+', '-', tag.lower()).strip('-')
 
@@ -177,15 +180,13 @@ jobs:
               return tags
 
           def build_transcript_block(t):
-              """Render a single transcript as a markdown block."""
-              meta = t['meta']
+              meta  = t['meta']
               guest = meta.get('guest', t['dir'])
               title = meta.get('title', f"Episode: {t['dir']}")
               date  = meta.get('publish_date', 'Unknown')
               url   = meta.get('youtube_url', '')
               tags  = t['tags']
-
-              block = f"## {title}\n"
+              block  = f"## {title}\n"
               block += f"**Guest:** {guest}  \n"
               block += f"**Published:** {date}  \n"
               if url:
@@ -197,84 +198,123 @@ jobs:
               block += "\n\n---\n\n"
               return block
 
-          def write_chunks(output_dir, prefix, proj_name, timestamp, header_block, transcript_blocks):
+          def build_header_block(proj_num, proj_name, timestamp, relevant_count, all_proj_topics, index_dir):
+              header  = f"# BYL Brain: {proj_name}\n"
+              header += f"_Auto-generated from Lenny's Podcast Transcripts Archive_\n"
+              header += f"_Last updated: {timestamp}_\n"
+              header += f"_Total episodes in this project: {relevant_count}_\n"
+              header += f"_Hard cap: 60,000 lines total across all parts_\n\n"
+              header += "---\n\n"
+              header += "## TOPIC INDEX\n\n"
+              for topic in all_proj_topics:
+                  index_file = index_dir / f"{topic}.md"
+                  if index_file.exists():
+                      header += f"### {topic.replace('-', ' ').title()}\n\n"
+                      header += index_file.read_text(encoding='utf-8', errors='replace')
+                      header += "\n\n---\n\n"
+              header += "## FULL TRANSCRIPTS\n\n---\n\n"
+              return header
+
+          def write_project(output_dir, prefix, proj_name, timestamp,
+                            header_block, transcript_blocks):
               """
-              Write one or more chunk files so no single file exceeds MAX_CHARS_PER_FILE.
-              Returns list of filenames written.
+              Write project content into part files.
+              RULE: sum of lines across ALL part files <= MAX_TOTAL_LINES_PER_PROJECT.
+              Each individual file also <= MAX_LINES_PER_FILE.
+              Transcripts are included in priority order until the budget is exhausted.
               """
-              files_written = []
-              chunk_index = 1
-              current_chars = 0
+              header_lines = count_lines(header_block)
+
+              # Calculate total line budget for transcript content
+              transcript_budget = MAX_TOTAL_LINES_PER_PROJECT - header_lines
+              if transcript_budget <= 0:
+                  print(f"  WARNING: Header alone exceeds 60k lines for {proj_name}. Writing header only.")
+                  transcript_budget = 0
+
+              # Select transcripts that fit within the budget
+              selected_blocks = []
+              used_lines = 0
+              skipped = 0
+              for block in transcript_blocks:
+                  block_lines = count_lines(block)
+                  if used_lines + block_lines <= transcript_budget:
+                      selected_blocks.append(block)
+                      used_lines += block_lines
+                  else:
+                      skipped += 1
+
+              if skipped:
+                  print(f"  NOTE: {skipped} episodes trimmed to stay within 60k line cap")
+
+              total_content_lines = header_lines + used_lines
+              print(f"  Total lines: {total_content_lines:,} / {MAX_TOTAL_LINES_PER_PROJECT:,} "
+                    f"({len(selected_blocks)} episodes, {skipped} trimmed)")
+
+              # Now split into part files, each <= MAX_LINES_PER_FILE
+              parts = []
+              current_lines = 0
               current_blocks = []
 
-              def flush_chunk(blocks, index, is_last, total_chunks_hint="?"):
-                  filename = f"{prefix}-part{index}.md" if total_chunks_hint != 1 else f"{prefix}.md"
-                  filepath = output_dir / filename
-                  with open(filepath, 'w', encoding='utf-8') as f:
-                      f.write(f"# BYL Brain: {proj_name}")
-                      if total_chunks_hint != 1:
-                          f.write(f" (Part {index})")
-                      f.write(f"\n")
-                      f.write(f"_Auto-generated from Lenny's Podcast Transcripts Archive_\n")
-                      f.write(f"_Last updated: {timestamp}_\n")
-                      if total_chunks_hint != 1:
-                          f.write(f"_This is part {index} of a multi-part project file._\n")
-                      f.write(f"\n---\n\n")
-                      if index == 1:
-                          f.write(header_block)
-                      f.write("## FULL TRANSCRIPTS\n\n")
-                      f.write("---\n\n")
-                      for b in blocks:
-                          f.write(b)
-                  size_mb = filepath.stat().st_size / (1024 * 1024)
-                  print(f"    -> Wrote {filename} ({len(blocks)} episodes, {size_mb:.2f} MB)")
-                  return filename
-
-              # First pass: figure out how many chunks we need
-              total_size = len(header_block)
-              for b in transcript_blocks:
-                  total_size += len(b)
-              estimated_chunks = max(1, -(-total_size // MAX_CHARS_PER_FILE))  # ceiling div
-
-              # Second pass: write chunks
-              chunk_files = []
-              current_chars = len(header_block) if estimated_chunks == 1 else 0
-              current_blocks = []
-
-              for b in transcript_blocks:
-                  if current_chars + len(b) > MAX_CHARS_PER_FILE and current_blocks:
-                      fname = flush_chunk(current_blocks, chunk_index, False, estimated_chunks)
-                      chunk_files.append(fname)
-                      chunk_index += 1
+              for block in selected_blocks:
+                  block_lines = count_lines(block)
+                  # Check if adding this block exceeds per-file limit
+                  if current_lines + block_lines > MAX_LINES_PER_FILE and current_blocks:
+                      parts.append(current_blocks)
                       current_blocks = []
-                      current_chars = 0
-                  current_blocks.append(b)
-                  current_chars += len(b)
+                      current_lines = 0
+                  current_blocks.append(block)
+                  current_lines += block_lines
 
               if current_blocks:
-                  fname = flush_chunk(current_blocks, chunk_index, True, estimated_chunks if estimated_chunks > 1 else 1)
-                  chunk_files.append(fname)
+                  parts.append(current_blocks)
 
-              # If only 1 chunk, rename to no suffix
-              if len(chunk_files) == 1:
-                  old = output_dir / chunk_files[0]
-                  new = output_dir / f"{prefix}.md"
-                  if old != new:
-                      old.rename(new)
-                  chunk_files = [f"{prefix}.md"]
+              if not parts:
+                  parts = [[]]  # Write at least one file even if empty
 
-              return chunk_files
+              total_parts = len(parts)
+              files_written = []
+
+              for i, part_blocks in enumerate(parts, 1):
+                  if total_parts == 1:
+                      filename = f"{prefix}.md"
+                  else:
+                      filename = f"{prefix}-part{i}.md"
+
+                  filepath = output_dir / filename
+
+                  with open(filepath, 'w', encoding='utf-8') as f:
+                      # Header goes in every part for standalone usability
+                      if i == 1:
+                          f.write(header_block)
+                      else:
+                          # Minimal header for continuation parts
+                          f.write(f"# BYL Brain: {proj_name} (Part {i} of {total_parts})\n")
+                          f.write(f"_Continuation — see Part 1 for topic index_\n")
+                          f.write(f"_Last updated: {timestamp}_\n\n---\n\n")
+                          f.write("## FULL TRANSCRIPTS (continued)\n\n---\n\n")
+
+                      for block in part_blocks:
+                          f.write(block)
+
+                  file_lines = count_lines(filepath.read_text(encoding='utf-8', errors='replace'))
+                  size_kb = filepath.stat().st_size / 1024
+                  print(f"    -> {filename}: {file_lines:,} lines | {size_kb:.0f} KB")
+                  files_written.append(filename)
+
+              return files_written
 
           # ── Main ─────────────────────────────────────────────────────────────────
 
           episodes_dir = Path('episodes')
-          output_dir = Path('byl-projects')
+          output_dir   = Path('byl-projects')
+          index_dir    = Path('index')
           output_dir.mkdir(exist_ok=True)
 
-          # Clean old files
+          # Clean old generated files
           for f in output_dir.glob('*.md'):
               f.unlink()
 
+          # Parse and classify all transcripts
           all_transcripts = []
           episode_dirs = sorted([d for d in episodes_dir.iterdir() if d.is_dir()])
           print(f"Found {len(episode_dirs)} episode directories\n")
@@ -288,56 +328,49 @@ jobs:
               projects = get_projects_for_tags(tags)
               if not projects:
                   projects = {2}
-                  print(f"  No match for '{ep_dir.name}' -> Project 2 (default)")
               all_transcripts.append({
-                  'path': transcript_file,
-                  'dir': ep_dir.name,
-                  'meta': meta,
-                  'body': body,
-                  'tags': tags,
+                  'path':     transcript_file,
+                  'dir':      ep_dir.name,
+                  'meta':     meta,
+                  'body':     body,
+                  'tags':     tags,
                   'projects': projects,
               })
 
           print(f"Classified {len(all_transcripts)} transcripts\n")
-
           timestamp = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')
-          index_dir = Path('index')
-          all_output_files = []
 
+          # Generate each project
           for proj_num, proj_name in PROJECT_NAMES.items():
-              prefix = PROJECT_FILE_PREFIX[proj_num]
+              prefix   = PROJECT_FILE_PREFIX[proj_num]
               relevant = [t for t in all_transcripts if proj_num in t['projects']]
 
-              print(f"Project {proj_num:02d}: {proj_name} ({len(relevant)} episodes)")
+              print(f"\nProject {proj_num:02d}: {proj_name} ({len(relevant)} episodes)")
 
-              # Build topic index header block
-              proj_topics = [k for k, v in TOPIC_TO_PROJECT.items() if v == proj_num]
+              # Build topic list for this project
+              proj_topics  = [k for k, v  in TOPIC_TO_PROJECT.items()    if v  == proj_num]
               multi_topics = [k for k, vl in MULTI_PROJECT_TOPICS.items() if proj_num in vl]
               all_proj_topics = sorted(set(proj_topics + multi_topics))
 
-              header_block = f"## TOPIC INDEX\n\n"
-              header_block += f"_This project covers {len(relevant)} episodes across {len(all_proj_topics)} topics._\n\n"
-              for topic in all_proj_topics:
-                  index_file = index_dir / f"{topic}.md"
-                  if index_file.exists():
-                      header_block += f"### {topic.replace('-', ' ').title()}\n\n"
-                      header_block += index_file.read_text(encoding='utf-8', errors='replace')
-                      header_block += "\n\n---\n\n"
-
-              # Build transcript blocks
+              header_block     = build_header_block(proj_num, proj_name, timestamp,
+                                                    len(relevant), all_proj_topics, index_dir)
               transcript_blocks = [build_transcript_block(t) for t in relevant]
 
-              # Write with chunking
-              files = write_chunks(
-                  output_dir, prefix, proj_name,
-                  timestamp, header_block, transcript_blocks
-              )
-              all_output_files.extend(files)
+              write_project(output_dir, prefix, proj_name, timestamp,
+                            header_block, transcript_blocks)
 
-          print(f"\n✅ Done. Files written to byl-projects/:")
+          # Final summary
+          print(f"\n{'='*60}")
+          print(f"FINAL OUTPUT — byl-projects/")
+          print(f"{'='*60}")
+          total_lines_all = 0
           for f in sorted(output_dir.glob('*.md')):
-              size_mb = f.stat().st_size / (1024 * 1024)
-              print(f"  {f.name}: {size_mb:.2f} MB")
+              lines = count_lines(f.read_text(encoding='utf-8', errors='replace'))
+              size_kb = f.stat().st_size / 1024
+              total_lines_all += lines
+              status = "✅" if lines <= MAX_LINES_PER_FILE else "❌ OVER LIMIT"
+              print(f"  {status} {f.name}: {lines:,} lines | {size_kb:.0f} KB")
+          print(f"\nTotal lines across all files: {total_lines_all:,}")
 
           PYTHON_SCRIPT
 
@@ -348,7 +381,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add byl-projects/
-          git diff --staged --quiet || git commit -m "chore: update byl-projects/ with 200k token cap [auto]"
+          git diff --staged --quiet || git commit -m "chore: update byl-projects/ 60k line cap [auto]"
           git push
 
       - name: Notify via Slack
@@ -356,5 +389,5 @@ jobs:
           curl -X POST "${{ secrets.SLACK_WEBHOOK_URL }}" \
             -H 'Content-type: application/json' \
             --data "{
-              \"text\": \"📚 *BYL Project Files Updated*\nAll project brain files regenerated (200k token cap, auto-split where needed).\n👉 https://github.com/${{ github.repository }}/tree/main/byl-projects\"
+              \"text\": \"📚 *BYL Project Files Updated*\nAll 10 projects regenerated. Hard cap: 60,000 lines total per project.\n👉 https://github.com/${{ github.repository }}/tree/main/byl-projects\"
             }"
