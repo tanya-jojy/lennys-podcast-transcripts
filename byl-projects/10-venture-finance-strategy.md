@@ -1,11 +1,12 @@
 # BYL Brain: Venture, Finance & Strategy
 _Auto-generated from Lenny's Podcast Transcripts Archive_
-_Last updated: 2026-02-23 00:23 UTC_
-_Episodes in this project: 3_
+_Last updated: 2026-02-23 00:40 UTC_
 
 ---
 
 ## TOPIC INDEX
+
+_This project covers 3 episodes across 6 topics._
 
 ### Bootstrapping
 
@@ -157,8 +158,6 @@ Episodes discussing **venture capital**:
 ---
 
 ## FULL TRANSCRIPTS
-
-_This project contains 3 full episode transcripts._
 
 ---
 
