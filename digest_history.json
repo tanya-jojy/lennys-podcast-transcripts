@@ -1,4 +1,9 @@
 {
-  "format_rotation": 0,
-  "topic_history": {}
+  "format_rotation": 1,
+  "topic_history": {
+    "community-building.md": "2026-02-26T16:28:57.197455",
+    "experimentation.md": "2026-02-26T16:28:57.197455",
+    "communication.md": "2026-02-26T16:28:57.197455",
+    "company-culture.md": "2026-02-26T16:28:57.197455"
+  }
 }
