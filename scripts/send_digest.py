@@ -53,68 +53,127 @@ TOPIC_BUCKETS = {
 BUCKET_ORDER = ["product", "engineering", "data", "design", "everyone"]
 
 BUCKET_LABELS = {
-    "product": "🧠 Product",
-    "engineering": "⚙️ Engineering",
-    "data": "📊 Data",
-    "design": "🎨 Design",
-    "everyone": "🌀 Everyone",
+    "product": "Product",
+    "engineering": "Engineering",
+    "data": "Data",
+    "design": "Design",
+    "everyone": "Everyone",
 }
 
 FORMATS = [
     {
         "name": "The 5 Lessons",
         "instruction": (
-            "For each point: write a bold insight headline, then 3 sentences of substance "
-            "that unpack the lesson with specificity, then cite the guest name and episode source in italics."
+            "For each point: write a headline as a single bold declarative sentence — "
+            "make it specific, not generic. Then write exactly 3 sentences of substance: "
+            "unpack the insight with rigor, connect it to real practice, and where relevant "
+            "tie it to building tools that touch people's inner lives. "
+            "End with just the guest's name on its own line — no label, no italics, no 'source:'. "
+            "Use this exact structure for each of the 5 sections:\n\n"
+            "## [Bucket Name]\n\n"
+            "**[Headline]**\n\n"
+            "[Sentence 1. Sentence 2. Sentence 3.]\n\n"
+            "[Guest Name]\n\n"
+            "---"
         ),
     },
     {
         "name": "The 5 Contrarian Takes",
         "instruction": (
-            "For each point: clearly state what conventional wisdom gets wrong, "
-            "then state what to do instead with a concrete explanation, "
-            "then cite the guest name and episode source in italics."
+            "For each point: write a headline that names what conventional wisdom gets wrong — "
+            "sharp, specific, slightly uncomfortable. Then write exactly 3 sentences: "
+            "what the default thinking misses, what to do instead with enough detail to act on, "
+            "and why this matters specifically for a team building behavioral science products. "
+            "End with just the guest's name on its own line. "
+            "Use this exact structure:\n\n"
+            "## [Bucket Name]\n\n"
+            "**[Contrarian headline]**\n\n"
+            "[Sentence 1. Sentence 2. Sentence 3.]\n\n"
+            "[Guest Name]\n\n"
+            "---"
         ),
     },
     {
         "name": "The 5 Frameworks",
         "instruction": (
-            "For each point: give the framework a sharp memorable name, "
-            "provide a one-sentence definition, explain how and when to use it, "
-            "then cite the guest name and episode source in italics."
+            "For each point: give the framework a sharp, memorable name as the headline. "
+            "Then write exactly 3 sentences: a clean one-sentence definition, "
+            "how it works in practice with a concrete example, "
+            "and when to reach for it — including the conditions where it breaks. "
+            "End with just the guest's name on its own line. "
+            "Use this exact structure:\n\n"
+            "## [Bucket Name]\n\n"
+            "**[Framework Name]**\n\n"
+            "[Sentence 1. Sentence 2. Sentence 3.]\n\n"
+            "[Guest Name]\n\n"
+            "---"
         ),
     },
     {
         "name": "The 5 Mistakes",
         "instruction": (
-            "For each point: name the mistake in one sharp sentence, "
-            "describe what happened or what it looks like in practice, "
-            "explain why it happens, explain how to avoid it, "
-            "then cite the guest name and episode source in italics."
+            "For each point: name the mistake in one sharp, specific headline — "
+            "not a category, an actual mistake teams make. "
+            "Then write exactly 3 sentences: what it looks like in practice so people recognize it, "
+            "why it happens (the real reason, not the surface one), "
+            "and how to avoid it with something concrete enough to do next week. "
+            "End with just the guest's name on its own line. "
+            "Use this exact structure:\n\n"
+            "## [Bucket Name]\n\n"
+            "**[Mistake headline]**\n\n"
+            "[Sentence 1. Sentence 2. Sentence 3.]\n\n"
+            "[Guest Name]\n\n"
+            "---"
         ),
     },
     {
         "name": "The 5 What-Ifs",
         "instruction": (
-            "For each point: pose a speculative future-facing provocation grounded in the episode content, "
-            "explain why it matters and what it would change, "
-            "then cite the guest name and episode source in italics."
+            "For each point: pose a speculative future-facing provocation as the headline — "
+            "grounded in the episode content but pushed forward. Make it genuinely unsettling. "
+            "Then write exactly 3 sentences: what would have to be true for this to happen, "
+            "what it would change about how we build, "
+            "and why a team working on self-discovery tools should be thinking about it now. "
+            "End with just the guest's name on its own line. "
+            "Use this exact structure:\n\n"
+            "## [Bucket Name]\n\n"
+            "**[What-if provocation]**\n\n"
+            "[Sentence 1. Sentence 2. Sentence 3.]\n\n"
+            "[Guest Name]\n\n"
+            "---"
         ),
     },
     {
         "name": "The 5 This Week In...",
         "instruction": (
-            "For each point: surface an evergreen topic from the episode and frame it with fresh urgency "
-            "relevant to the current moment, explain why it matters right now specifically, "
-            "then cite the guest name and episode source in italics."
+            "For each point: surface an evergreen insight from the episode and frame it "
+            "with a headline that creates fresh urgency — not timeless wisdom, a live wire. "
+            "Then write exactly 3 sentences: what the insight actually is, "
+            "why it has teeth right now specifically, "
+            "and what the team should do with it this week — concrete, not inspirational. "
+            "End with just the guest's name on its own line. "
+            "Use this exact structure:\n\n"
+            "## [Bucket Name]\n\n"
+            "**[Urgent headline]**\n\n"
+            "[Sentence 1. Sentence 2. Sentence 3.]\n\n"
+            "[Guest Name]\n\n"
+            "---"
         ),
     },
     {
         "name": "The 5 Playbooks",
         "instruction": (
-            "For each point: give the playbook a name, break it into 3-4 concrete tactical steps, "
-            "explain when to run this play and what outcome to expect, "
-            "then cite the guest name and episode source in italics."
+            "For each point: give the playbook a name that makes someone want to run it. "
+            "Then write exactly 3 sentences: what the play is and what problem it solves, "
+            "the 3-4 steps to execute it in order, "
+            "and what outcome to expect and how you know it worked. "
+            "End with just the guest's name on its own line. "
+            "Use this exact structure:\n\n"
+            "## [Bucket Name]\n\n"
+            "**[Playbook Name]**\n\n"
+            "[Sentence 1. Sentence 2. Sentence 3.]\n\n"
+            "[Guest Name]\n\n"
+            "---"
         ),
     },
 ]
@@ -123,7 +182,7 @@ REPO_ROOT = Path(__file__).parent.parent
 HISTORY_FILE = REPO_ROOT / "digest_history.json"
 INDEX_DIR = REPO_ROOT / "index"
 
-SYSTEM_PROMPT = ("""You are the voice behind a weekly digest for the full technology team at a \
+SYSTEM_PROMPT = """You are the voice behind a weekly digest for the full technology team at a \
 behavioral science startup — product, engineering, data, and design. You write \
 like the love child of Peter Thiel, Nassim Taleb, Nir Eyal, and Lenny Rachitsky: \
 singular and uncomfortable when the truth demands it, blunt and anti-fragile when \
@@ -136,13 +195,14 @@ Your writing principles:
 - Be tactical enough that someone can use it in a meeting today.
 - Be intellectual enough that someone feels proud their company thinks this way.
 - Short sentences. No filler. No corporate warmth. Real warmth.
-- Always cite the guest name and episode — the source is part of the credibility.
+- Always cite the guest name — the source is part of the credibility.
 - Write for builders, not managers. This team ships things.
 - Each point should feel like something worth screenshotting and sending to a friend.
 
 The team builds AI-native tools for self-discovery. \
 When relevant, connect insights back to the human side of building — \
-behavior change, identity, what makes people trust a product with their inner life.""")
+behavior change, identity, what makes people trust a product with their inner life."""
+
 
 def load_history():
     if HISTORY_FILE.exists():
@@ -172,7 +232,6 @@ def pick_topic_file(bucket, topic_history):
         if (INDEX_DIR / f).exists() and not is_recently_used(f, topic_history)
     ]
     if not available:
-        # Fall back to all existing files if everything has been recently used
         available = [f for f in candidates if (INDEX_DIR / f).exists()]
     if not available:
         raise ValueError(f"No index files found for bucket '{bucket}'")
@@ -181,16 +240,14 @@ def pick_topic_file(bucket, topic_history):
 
 def build_user_prompt(format_info, bucket_files):
     lines = [
-        f"Write this week's digest in the *{format_info['name']}* format.",
+        f"Write this week's digest in the {format_info['name']} format.",
         "",
         f"Format instructions: {format_info['instruction']}",
         "",
-        "Produce exactly 5 points in this order: 🧠 Product, ⚙️ Engineering, 📊 Data, 🎨 Design, 🌀 Everyone.",
-        "Start each point with its emoji label and bucket name as a header.",
-        "Use *bold* for headlines and _italic_ for episode sources.",
-        "Separate each point with a blank line.",
+        "Produce exactly 5 points in this order: Product, Engineering, Data, Design, Everyone.",
+        "Follow the structure exactly — ## header, bold headline, 3 sentences, guest name, ---",
+        "No preamble. No meta-commentary. No extra formatting. Start directly with ## Product.",
         "Never repeat insights or framings from previous digests.",
-        "Return only the 5 formatted digest points — no preamble, no meta-commentary.",
         "",
         "Source material for each section:",
         "",
@@ -219,7 +276,7 @@ def call_claude(user_prompt):
 def post_to_slack(format_name, digest_content):
     webhook_url = os.environ["SLACK_WEBHOOK_URL"]
     today = datetime.now().strftime("%B %d, %Y")
-    header = f"*📬 BYL Tech Digest — {format_name}* | Week of {today}"
+    header = f"BYL Tech Digest — {format_name} | Week of {today}"
     full_message = f"{header}\n\n{digest_content}"
     response = requests.post(webhook_url, json={"text": full_message}, timeout=10)
     response.raise_for_status()
