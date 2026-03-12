@@ -1,5 +1,5 @@
 {
-  "format_rotation": 4,
+  "format_rotation": 5,
   "topic_history": {
     "community-building.md": "2026-02-26T16:28:57.197455",
     "experimentation.md": "2026-02-26T16:28:57.197455",
@@ -18,6 +18,11 @@
     "chatgpt.md": "2026-03-05T21:32:18.921297",
     "data-analytics.md": "2026-03-05T21:32:18.921297",
     "design.md": "2026-03-05T21:32:18.921297",
-    "startup-culture.md": "2026-03-05T21:32:18.921297"
+    "startup-culture.md": "2026-03-05T21:32:18.921297",
+    "branding.md": "2026-03-12T21:30:38.365886",
+    "openai.md": "2026-03-12T21:30:38.365886",
+    "network-effects.md": "2026-03-12T21:30:38.365886",
+    "customer-experience.md": "2026-03-12T21:30:38.365886",
+    "work-life-balance.md": "2026-03-12T21:30:38.365886"
   }
 }
