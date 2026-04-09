@@ -1,5 +1,5 @@
 {
-  "format_rotation": 1,
+  "format_rotation": 2,
   "topic_history": {
     "community-building.md": "2026-02-26T16:28:57.197455",
     "experimentation.md": "2026-02-26T16:28:57.197455",
@@ -14,12 +14,12 @@
     "ai.md": "2026-02-26T21:30:28.120153",
     "okrs.md": "2026-02-26T21:30:28.120153",
     "sales.md": "2026-02-26T21:30:28.120153",
-    "ab-testing.md": "2026-03-05T21:32:18.921297",
+    "ab-testing.md": "2026-04-09T21:42:58.299604",
     "chatgpt.md": "2026-03-05T21:32:18.921297",
     "data-analytics.md": "2026-03-05T21:32:18.921297",
     "design.md": "2026-03-05T21:32:18.921297",
     "startup-culture.md": "2026-03-05T21:32:18.921297",
-    "branding.md": "2026-03-12T21:30:38.365886",
+    "branding.md": "2026-04-09T21:42:58.299604",
     "openai.md": "2026-03-12T21:30:38.365886",
     "network-effects.md": "2026-03-12T21:30:38.365886",
     "customer-experience.md": "2026-03-12T21:30:38.365886",
@@ -35,6 +35,9 @@
     "career-development.md": "2026-03-26T21:29:47.431083",
     "brand-building.md": "2026-04-02T21:35:35.476592",
     "neuroscience.md": "2026-04-02T21:35:35.476592",
-    "entrepreneurship.md": "2026-04-02T21:35:35.476592"
+    "entrepreneurship.md": "2026-04-02T21:35:35.476592",
+    "product-development.md": "2026-04-09T21:42:58.299604",
+    "decision-making.md": "2026-04-09T21:42:58.299604",
+    "mental-health.md": "2026-04-09T21:42:58.299604"
   }
 }
