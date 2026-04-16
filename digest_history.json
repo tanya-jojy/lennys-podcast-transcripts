@@ -1,11 +1,11 @@
 {
-  "format_rotation": 2,
+  "format_rotation": 3,
   "topic_history": {
     "community-building.md": "2026-02-26T16:28:57.197455",
     "experimentation.md": "2026-02-26T16:28:57.197455",
     "communication.md": "2026-02-26T16:28:57.197455",
     "company-culture.md": "2026-02-26T16:28:57.197455",
-    "storytelling.md": "2026-04-02T21:35:35.476592",
+    "storytelling.md": "2026-04-16T21:41:03.974185",
     "engineering.md": "2026-02-26T16:39:57.766710",
     "growth-strategy.md": "2026-02-26T16:39:57.766710",
     "personal-branding.md": "2026-03-26T21:29:47.431083",
@@ -21,11 +21,11 @@
     "startup-culture.md": "2026-03-05T21:32:18.921297",
     "branding.md": "2026-04-09T21:42:58.299604",
     "openai.md": "2026-03-12T21:30:38.365886",
-    "network-effects.md": "2026-03-12T21:30:38.365886",
+    "network-effects.md": "2026-04-16T21:41:03.974185",
     "customer-experience.md": "2026-03-12T21:30:38.365886",
     "work-life-balance.md": "2026-03-12T21:30:38.365886",
     "product-leadership.md": "2026-03-19T21:33:26.729847",
-    "machine-learning.md": "2026-04-02T21:35:35.476592",
+    "machine-learning.md": "2026-04-16T21:41:03.974185",
     "analytics.md": "2026-03-19T21:33:26.729847",
     "creativity.md": "2026-03-19T21:33:26.729847",
     "business-strategy.md": "2026-03-19T21:33:26.729847",
@@ -38,6 +38,8 @@
     "entrepreneurship.md": "2026-04-02T21:35:35.476592",
     "product-development.md": "2026-04-09T21:42:58.299604",
     "decision-making.md": "2026-04-09T21:42:58.299604",
-    "mental-health.md": "2026-04-09T21:42:58.299604"
+    "mental-health.md": "2026-04-09T21:42:58.299604",
+    "product-led-growth.md": "2026-04-16T21:41:03.974185",
+    "career-growth.md": "2026-04-16T21:41:03.974185"
   }
 }
